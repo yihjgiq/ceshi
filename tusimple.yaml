@@ -1,0 +1,56 @@
+# 完整配置文件：configs/tusimple.yaml
+datasets:
+  train:
+    type: LaneDataset
+    parameters:
+      dataset: tusimple
+      split: train
+      img_size: [1280, 720]  # 输入图像尺寸（W, H）
+      root: "D:/project/New/dataset/TUSimple/train_set"  # 数据集根目录（替换为你的实际路径）
+      json_pattern: "label_data_*.json"         # 训练集标注文件
+      normalize: true
+      augmentations:
+        - name: Affine
+          parameters:
+            rotate: [-10, 10]  # 随机旋转角度范围（单位：度）
+            translate: [0.1, 0.1]  # 平移范围（比例）
+            scale: [0.8, 1.2]       # 缩放范围
+        - name: HorizontalFlip
+          parameters:
+            p: 0.5  # 水平翻转概率
+
+  test: &test  # 定义锚点 `test`
+    type: LaneDataset
+    parameters:
+      dataset: tusimple
+      split: test
+      root: "D:/project/New/dataset/TUSimple/test_set"  # 同上
+      json_pattern: "test_label.json"              # 测试集标注文件
+      img_size: [1280, 720]
+      normalize: true
+      augmentations: []  # 测试集无需数据增强
+
+  val:
+    type: LaneDataset
+    parameters:
+      dataset: tusimple
+      split: val
+      root: "D:/project/New/dataset/TUSimple/train_set"
+      json_pattern: "train_val.json"     # ✅ 加上这行
+      gt_file: "train_val_gt.txt"
+      img_size: [1280, 720]
+      normalize: true
+      augmentations: []
+
+
+optimizer:  
+  type: Adam  # 优化器类型
+  lr: 0.001  # 学习率
+  weight_decay: 0.00001  # 权重衰减
+  momentum: 0.9  # 动量
+training:
+  batch_size: 16  # 批大小
+  epochs: 20 # 训练轮数
+  save_interval:  4 # 模型保存间隔（轮数）
+  checkpoint_dir: "D:/project/New/address"  # 模型保存路径
+
